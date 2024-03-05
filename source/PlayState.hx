@@ -120,6 +120,7 @@ class PlayState extends MusicBeatState
 	public var songSpeed(default, set):Float = 1;
 	public var songSpeedType:String = "multiplicative";
 	public var noteKillOffset:Float = 350;
+	public var defaultNoteZoom:Float = 1;
 
 	public var playbackRate(default, set):Float = 1;
 
@@ -202,6 +203,7 @@ class PlayState extends MusicBeatState
 	public var iconP1:HealthIcon;
 	public var iconP2:HealthIcon;
 	public var camHUD:FlxCamera;
+	public var camNOTES:FlxCamera;
 	public var camGame:FlxCamera;
 	public var camOther:FlxCamera;
 	public var cameraSpeed:Float = 1;
@@ -360,11 +362,14 @@ class PlayState extends MusicBeatState
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
 		camOther = new FlxCamera();
+		camNOTES = new FlxCamera();
+		camNOTES.bgColor.alpha = 0;
 		camHUD.bgColor.alpha = 0;
 		camOther.bgColor.alpha = 0;
 
 		FlxG.cameras.reset(camGame);
 		FlxG.cameras.add(camHUD, false);
+		FlxG.cameras.add(camNOTES, false);
 		FlxG.cameras.add(camOther, false);
 		grpNoteSplashes = new FlxTypedGroup<NoteSplash>();
 
@@ -975,6 +980,11 @@ class PlayState extends MusicBeatState
 		uiGroup.groupName = "uiGroup";
 		uiGroup.onAdd = add;
 
+		uiGroup.cameras = [camHUD];
+		noteGroup.cameras = [camNOTES];
+		comboGroup.cameras = [camHUD];
+		// I hate uiGroup, noteGroup, and comboGroup so much.
+		
 		switch(curStage)
 		{
 			case 'limo':
@@ -1148,13 +1158,10 @@ class PlayState extends MusicBeatState
 		if(ClientPrefs.data.downScroll)
 			botplayTxt.y = timeBarBG.y - 78;
 
-		uiGroup.cameras = [camHUD];
-		noteGroup.cameras = [camHUD];
-		comboGroup.cameras = [camHUD];
-		// I hate uiGroup, noteGroup, and comboGroup so much.
-		strumLineNotes.cameras = [camHUD];
-		grpNoteSplashes.cameras = [camHUD];
-		notes.cameras = [camHUD];
+		
+		strumLineNotes.cameras = [camNOTES];
+		grpNoteSplashes.cameras = [camNOTES];
+		notes.cameras = [camNOTES];
 		healthBar.cameras = [camHUD];
 		healthBarBG.cameras = [camHUD];
 		iconP1.cameras = [camHUD];
@@ -1309,6 +1316,9 @@ class PlayState extends MusicBeatState
 							{
 								startCountdown();
 							}
+						});
+						FlxTween.tween(camNOTES, {zoom: defaultNoteZoom}, 2.5, {
+							ease: FlxEase.quadInOut
 						});
 					});
 				case 'senpai' | 'roses' | 'thorns':
@@ -2177,7 +2187,7 @@ class PlayState extends MusicBeatState
 
 						countdownReady.screenCenter();
 						countdownReady.antialiasing = antialias;
-						insert(members.indexOf(noteGroup), countdownReady);
+						insert(members.indexOf(notes), countdownReady);
 						FlxTween.tween(countdownReady, {/*y: countdownReady.y + 100,*/ alpha: 0}, Conductor.crochet / 1000, {
 							ease: FlxEase.cubeInOut,
 							onComplete: function(twn:FlxTween)
@@ -2197,7 +2207,7 @@ class PlayState extends MusicBeatState
 
 						countdownSet.screenCenter();
 						countdownSet.antialiasing = antialias;
-						insert(members.indexOf(noteGroup), countdownSet);
+						insert(members.indexOf(notes), countdownSet);
 						FlxTween.tween(countdownSet, {/*y: countdownSet.y + 100,*/ alpha: 0}, Conductor.crochet / 1000, {
 							ease: FlxEase.cubeInOut,
 							onComplete: function(twn:FlxTween)
@@ -2219,7 +2229,7 @@ class PlayState extends MusicBeatState
 
 						countdownGo.screenCenter();
 						countdownGo.antialiasing = antialias;
-						insert(members.indexOf(noteGroup), countdownGo);
+						insert(members.indexOf(notes), countdownGo);
 						FlxTween.tween(countdownGo, {/*y: countdownGo.y + 100,*/ alpha: 0}, Conductor.crochet / 1000, {
 							ease: FlxEase.cubeInOut,
 							onComplete: function(twn:FlxTween)
@@ -3122,6 +3132,7 @@ class PlayState extends MusicBeatState
 		{
 			FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom, FlxG.camera.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125 * camZoomingDecay * playbackRate), 0, 1));
 			camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125 * camZoomingDecay * playbackRate), 0, 1));
+			camNOTES.zoom = FlxMath.lerp(defaultNoteZoom, camNOTES.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125 * camZoomingDecay * playbackRate), 0, 1));
 		}
 
 		FlxG.watch.addQuick("secShit", curSection);
@@ -3592,6 +3603,7 @@ class PlayState extends MusicBeatState
 
 					FlxG.camera.zoom += camZoom;
 					camHUD.zoom += hudZoom;
+					camNOTES.zoom += hudZoom;
 				}
 
 			case 'Trigger BG Ghouls':
@@ -4769,10 +4781,12 @@ class PlayState extends MusicBeatState
 		if(ClientPrefs.data.camZooms) {
 			FlxG.camera.zoom += 0.015;
 			camHUD.zoom += 0.03;
+			camNOTES.zoom += 0.03;
 
 			if(!camZooming) { //Just a way for preventing it to be permanently zoomed until Skid & Pump hits a note
 				FlxTween.tween(FlxG.camera, {zoom: defaultCamZoom}, 0.5);
 				FlxTween.tween(camHUD, {zoom: 1}, 0.5);
+				FlxTween.tween(camNOTES, {zoom: defaultNoteZoom}, 0.5);
 			}
 		}
 
@@ -4994,6 +5008,7 @@ class PlayState extends MusicBeatState
 			{
 				FlxG.camera.zoom += 0.015 * camZoomingMult;
 				camHUD.zoom += 0.03 * camZoomingMult;
+				camNOTES.zoom += 0.03 * camZoomingMult;
 			}
 
 			if (SONG.notes[curSection].changeBPM)
