@@ -29,6 +29,7 @@ jobs:
         run: |
           mkdir ~/haxelib
           haxelib setup ~/haxelib 
+          haxelib git fnf-modcharting-tools https://github.com/TheZoroForce240/FNF-Modcharting-Tools
           haxelib git hxcpp https://github.com/Sonamaker1/hxcpp --always > nul 
           haxelib --always set lime 8.0.2 > nul 
           haxelib --never install flixel 5.5.0 > nul 
@@ -37,7 +38,7 @@ jobs:
           haxelib --always set tjson 1.4.0 > nul 
           haxelib --always set openfl 9.2.1 > nul 
           haxelib --always set flixel-tools 1.5.1 > nul 
-          haxelib --always set flixel-ui 2.4.0 > nul 
+          haxelib --always set flixel-ui 2.5.0 > nul 
           haxelib --always set flixel-addons 3.2.1 > nul 
           haxelib git hxCodec https://github.com/polybiusproxy/hxCodec > nul
           haxelib git linc_luajit https://github.com/superpowers04/linc_luajit > nul 
@@ -57,7 +58,7 @@ jobs:
       - name: Uploading artifact (entire build)
         uses: actions/upload-artifact@v2
         with:
-          name: ThisEngineBuild
+          name: ExtraEngineBuild
           path: export/release/macos/bin
       - name: Uploading artifact (executable)
         uses: actions/upload-artifact@v2
