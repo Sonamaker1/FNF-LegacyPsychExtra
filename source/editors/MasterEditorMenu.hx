@@ -27,7 +27,7 @@ class MasterEditorMenu extends MusicBeatState
 		'Dialogue Editor',
 		'Dialogue Portrait Editor',
 		'Character Editor',
-		'Chart Editor'
+		'Chart Editor',
 		'Modchart Editor'
 	];
 	private var grpTexts:FlxTypedGroup<Alphabet>;
@@ -128,7 +128,7 @@ class MasterEditorMenu extends MusicBeatState
 					LoadingState.loadAndSwitchState(new DialogueEditorState(), false);
 				case 'Chart Editor'://felt it would be cool maybe
 					LoadingState.loadAndSwitchState(new ChartingState(), false);
-				case 'Modchart Editor'://felt it would be cool maybe
+				case 'Modchart Editor'://felt it would be cooler maybe
 					LoadingState.loadAndSwitchState(new ModchartEditorState(), false);
 			}
 			FlxG.sound.music.volume = 0;
