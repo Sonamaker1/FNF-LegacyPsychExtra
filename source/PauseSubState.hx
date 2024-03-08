@@ -40,12 +40,13 @@ class PauseSubState extends MusicBeatSubstate
 		if(PlayState.chartingMode)
 		{
 			menuItemsOG.insert(2, 'Leave Charting Mode');
+			menuItemsOG.insert(3, 'Modcharting Mode');
 			
-			var num:Int = 0;
+			var num:Int = 1;
 			if(!PlayState.instance.startingSong)
 			{
-				num = 1;
-				menuItemsOG.insert(3, 'Skip Time');
+				menuItemsOG.insert(3+num, 'Skip Time');
+				num = 2;
 			}
 			menuItemsOG.insert(3 + num, 'End Song');
 			menuItemsOG.insert(4 + num, 'Toggle Practice Mode');
@@ -226,6 +227,8 @@ class PauseSubState extends MusicBeatSubstate
 				case "Leave Charting Mode":
 					restartSong();
 					PlayState.chartingMode = false;
+				case "Modcharting Mode":
+					LoadingState.loadAndSwitchState(new ModchartEditorState(), false);
 				case 'Skip Time':
 					if(curTime < Conductor.songPosition)
 					{
