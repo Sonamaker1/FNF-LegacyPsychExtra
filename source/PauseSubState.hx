@@ -13,6 +13,7 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.FlxCamera;
 import flixel.util.FlxStringUtil;
+import modcharting.ModchartEditorState;
 
 class PauseSubState extends MusicBeatSubstate
 {
